@@ -54,6 +54,7 @@ const watcher = {
           }
         }
       }
+      return watchObj;
     };
 
     watchObj.watcher.sync = function (target) {
@@ -69,6 +70,7 @@ const watcher = {
           }.bind(watchObj)
         );
       }
+      return watchObj;
     }.bind(watchObj);
 
     watchObj.watcher.notify = function (type, target, key) {
