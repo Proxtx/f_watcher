@@ -1,4 +1,4 @@
-export const watcher = (obj) => {
+export const watcher = (obj = {}) => {
   const handlers = {
     get: function (target, key) {
       if (key != "watcher") {
@@ -29,25 +29,26 @@ export const watcher = (obj) => {
   watchObj.watcher = {};
   watchObj.watcher.eventWatchers = { get: [], set: [], any: [], custom: {} };
   watchObj.watcher.addListener = function () {
-    for (let i = 0; i < arguments.length; i += 2) {
-      if (arguments[i] && arguments[i + 1]) {
+    const job = arguments[0];
+    for (let i = 1; i < arguments.length; i++) {
+      if (arguments[i]) {
         switch (arguments[i]) {
           case "get":
-            this.eventWatchers.get.push(arguments[i + 1]);
+            this.eventWatchers.get.push(job);
             break;
 
           case "set":
-            this.eventWatchers.set.push(arguments[i + 1]);
+            this.eventWatchers.set.push(job);
             break;
 
           case "any":
-            this.eventWatchers.any.push(arguments[i + 1]);
+            this.eventWatchers.any.push(job);
             break;
 
           default:
             this.eventWatchers.custom[arguments[i]]
-              ? this.eventWatchers.custom[arguments[i]].push(arguments[i + 1])
-              : (this.eventWatchers.custom[arguments[i]] = [arguments[i + 1]]);
+              ? this.eventWatchers.custom[arguments[i]].push(job)
+              : (this.eventWatchers.custom[arguments[i]] = [job]);
         }
       }
     }
