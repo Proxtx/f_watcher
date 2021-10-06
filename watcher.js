@@ -90,6 +90,7 @@ export const watcher = (obj = {}) => {
     }
     if (apply) return;
     for (let i in keys) {
+      if (keys[i] == "watcher") continue;
       obj[keys[i]] == undefined && (this[keys[i]] = undefined);
     }
   }.bind(watchObj);
