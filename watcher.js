@@ -83,5 +83,16 @@ export const watcher = (obj = {}) => {
     }
   };
 
+  watchObj.watcher.replace = function (obj, apply = false) {
+    const keys = Object.keys(this);
+    for (let i in obj) {
+      this[i] = obj[i];
+    }
+    if (apply) return;
+    for (let i in keys) {
+      obj[keys[i]] == undefined && (this[keys[i]] = undefined);
+    }
+  }.bind(watchObj);
+
   return watchObj;
 };
