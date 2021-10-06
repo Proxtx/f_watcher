@@ -21,7 +21,7 @@ export const watcher = (obj = {}) => {
         target.watcher.notify("set", ...arguments);
       }
 
-      return value;
+      return value || true;
     },
   };
 
