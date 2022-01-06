@@ -1,0 +1,19 @@
+{
+  "name": "@proxtx/watcher",
+  "version": "1.0.0",
+  "description": "watcher proxy wrap",
+  "main": "watcher.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Proxtx/f_watcher.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Proxtx/f_watcher/issues"
+  },
+  "homepage": "https://github.com/Proxtx/f_watcher#readme"
+}
