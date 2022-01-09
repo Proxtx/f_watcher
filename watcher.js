@@ -2,12 +2,18 @@ export const watcher = (obj = {}) => {
   const handlers = {
     get: function (target, key) {
       if (key != "watcher") {
-        target.watcher.notify("get", ...arguments);
+        target.watcher.notify({ operation: "get", target, key, nested: false });
         if (typeof target[key] === "object" && !Array.isArray(target[key])) {
-          let nestedWatcher = watcher.create(target[key]);
-          nestedWatcher.watcher.addListener("any", function () {
-            target.watcher.notify.bind(target.watcher)(...arguments);
-          });
+          let nestedWatcher = watcher(target[key]);
+          nestedWatcher.watcher.addListener(function (notify) {
+            target.watcher.notify.bind(target.watcher)({
+              target,
+              key,
+              nested: true,
+              event: notify,
+              operation: notify.operation,
+            });
+          }, "any");
           return nestedWatcher;
         }
       }
@@ -15,11 +21,17 @@ export const watcher = (obj = {}) => {
       return target[key];
     },
     set: function (target, key, value) {
-      target[key] = value;
-
       if (key != "watcher") {
-        target.watcher.notify("set", ...arguments);
+        target.watcher.notify({
+          operation: "set",
+          target,
+          key,
+          value,
+          nested: false,
+        });
       }
+
+      target[key] = value;
 
       return value || true;
     },
@@ -60,26 +72,26 @@ export const watcher = (obj = {}) => {
     for (let i = 1; i < arguments.length; i++) {
       this[arguments[i]] = target[arguments[i]];
       target.watcher.addListener(
-        arguments[i],
-        function (type, target, key, value) {
-          if (type == "set") {
-            this[key] = value;
+        function (notify) {
+          if (notify.operation == "set") {
+            this[notify.key] = notify.value;
           }
-        }.bind(watchObj)
+        }.bind(watchObj),
+        "set"
       );
     }
     return watchObj;
   }.bind(watchObj);
 
-  watchObj.watcher.notify = function (type, target, key) {
-    for (let i in this.eventWatchers[type]) {
-      this.eventWatchers[type][i](...arguments);
+  watchObj.watcher.notify = function (notify) {
+    for (let i in this.eventWatchers[notify.operation]) {
+      this.eventWatchers[notify.operation][i](notify);
     }
     for (let i in this.eventWatchers.any) {
-      this.eventWatchers.any[i](...arguments);
+      this.eventWatchers.any[i](notify);
     }
-    for (let i in this.eventWatchers.custom[key]) {
-      this.eventWatchers.custom[key][i](...arguments);
+    for (let i in this.eventWatchers.custom[notify.key]) {
+      this.eventWatchers.custom[notify.key][i](notify);
     }
   };
 
