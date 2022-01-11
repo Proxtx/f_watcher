@@ -21,6 +21,8 @@ export const watcher = (obj = {}) => {
       return target[key];
     },
     set: function (target, key, value) {
+      target[key] = value;
+
       if (key != "watcher") {
         target.watcher.notify({
           operation: "set",
@@ -30,8 +32,6 @@ export const watcher = (obj = {}) => {
           nested: false,
         });
       }
-
-      target[key] = value;
 
       return value || true;
     },
