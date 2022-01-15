@@ -4,7 +4,9 @@ export const watcher = (obj = {}) => {
       if (key != "watcher") {
         target.watcher.notify({ operation: "get", target, key, nested: false });
         if (typeof target[key] === "object" && !Array.isArray(target[key])) {
-          let nestedWatcher = watcher(target[key]);
+          let nestedWatcher = target[key].watcher
+            ? target[key]
+            : watcher(target[key]);
           nestedWatcher.watcher.addListener(function (notify) {
             target.watcher.notify.bind(target.watcher)({
               target,
