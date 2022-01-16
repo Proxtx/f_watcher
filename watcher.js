@@ -1,3 +1,8 @@
+/**
+ * Watcher is a proxy object wrap. It adds the functionality to add Listeners sync with other watchers and more.
+ * @param {Object} obj The original object
+ * @returns A proxy Object with the watcher attribute
+ */
 export const watcher = (obj = {}) => {
   const handlers = {
     get: function (target, key) {

@@ -1,6 +1,6 @@
 {
   "name": "@proxtx/watcher",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "watcher proxy wrap",
   "main": "watcher.js",
   "type": "module",
