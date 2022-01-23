@@ -4,6 +4,7 @@
  * @returns A proxy Object with the watcher attribute
  */
 export const watcher = (obj = {}) => {
+  let nestedWatcherListeners = [];
   const handlers = {
     get: function (target, key) {
       if (key != "watcher") {
@@ -12,16 +13,19 @@ export const watcher = (obj = {}) => {
           let nestedWatcher = target[key].watcher
             ? target[key]
             : watcher(target[key]);
-          nestedWatcher.watcher.addListener(function (notify) {
-            target.watcher.notify.bind(target.watcher)({
-              target,
-              key,
-              nested: true,
-              event: notify,
-              operation: notify.operation,
-            });
-          }, "any");
-          target[key] = nestedWatcher;
+          if (!nestedWatcherListeners[nestedWatcher]) {
+            nestedWatcher.watcher.addListener(function (notify) {
+              target.watcher.notify.bind(target.watcher)({
+                target,
+                key,
+                nested: true,
+                event: notify,
+                operation: notify.operation,
+              });
+            }, "any");
+            target[key] = nestedWatcher;
+            nestedWatcherListeners[nestedWatcher] = true;
+          }
         }
       }
       return target[key];
