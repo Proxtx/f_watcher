@@ -21,10 +21,9 @@ export const watcher = (obj = {}) => {
               operation: notify.operation,
             });
           }, "any");
-          return nestedWatcher;
+          target[key] = nestedWatcher;
         }
       }
-
       return target[key];
     },
     set: function (target, key, value) {
@@ -47,6 +46,7 @@ export const watcher = (obj = {}) => {
   let watchObj = new Proxy(obj, handlers);
   watchObj.watcher = {};
   watchObj.watcher.eventWatchers = { get: [], set: [], any: [], custom: {} };
+  watchObj.watcher.obj = obj;
   watchObj.watcher.addListener = function () {
     const job = arguments[0];
     for (let i = 1; i < arguments.length; i++) {
